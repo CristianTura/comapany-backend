@@ -1,14 +1,29 @@
 import type { Request, Response } from 'express'
-import Budget from '../models/Budget'
+import Budget from '../models/Budget';
+import Expense from '../models/Expense';
 
 export class BudgetController {
     static getAll = async (req : Request, res: Response) => {
-        console.log('desde busgets')
+        try {
+            const budgets = await Budget.findAll({
+                order: [
+                    ['createdAt', 'DESC']
+                ],
+                // TODO: Filtrar por el usuario autenticado
+                // limit: 10,
+                // where: {
+                //     name: 'vacaciones'
+                // }
+            })
+            res.json(budgets)
+        } catch (error) {
+            // console.log(error)
+            res.status(500).json({error: 'hubo un error'})
+        }
     }
 
     static create = async (req : Request, res: Response) => {
         try {
-            console.log(req.body)
             const budget = new Budget(req.body)
             await budget.save()
             res.status(201).json({message: 'Presupuesto creado correctamente'})
@@ -19,14 +34,19 @@ export class BudgetController {
     }
 
     static getById = async (req : Request, res: Response) => {
-        console.log('desde get one busgets')
+        const budget = await Budget.findByPk(req.budget.id, {
+            include: [Expense]
+        })
+        res.json(budget)
     }
 
     static updateById = async (req : Request, res: Response) => {
-        console.log('desde updateById')
+        await req.budget.update(req.body)
+        res.json('Presupuesto actualizado correctamente')
     }
     
     static deleteById = async (req : Request, res: Response) => {
-        console.log('desde deleteById')
+        await req.budget.destroy()
+        res.json('Presupuesto eliminado correctamente')
     }
 }

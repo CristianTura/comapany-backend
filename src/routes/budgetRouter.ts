@@ -1,22 +1,49 @@
 import { Router } from "express";
 import { BudgetController } from "../controllers/BudgetController";
-import { body } from "express-validator";
 import { handleInputErrors } from "../middleware/validations";
+import { validateBudgetExists, validateBudgetId, validateBudgetInput } from "../middleware/budget";
+import { ExpensesController } from "../controllers/ExpenseController";
+import { validateExpenseExists, validateExpenseId, validateExpenseInput } from "../middleware/expense";
 
 
 const router = Router()
 
+router.param('budgetId', validateBudgetId)
+router.param('budgetId', validateBudgetExists)
+
+router.param('expenseId', validateExpenseId)
+router.param('expenseId', validateExpenseExists)
+
 router.get('/', BudgetController.getAll)
 router.post('/',
-    body('name').notEmpty().withMessage('El nombre del presupuesto no puede ir vacio'),
-    body('amount').notEmpty().withMessage('La cantidad del presupuesto no puede ir vacia')
-                .isNumeric().withMessage('La cantidad no es válida')
-                .custom(value => value > 0).withMessage('La cantidad debe ser mayor a 0'),
+    validateBudgetInput,
     handleInputErrors,
     BudgetController.create
 )
-router.get('/:id', BudgetController.getById)
-router.put('/:id', BudgetController.updateById)
-router.delete('/:id', BudgetController.deleteById)
+router.get('/:budgetId', BudgetController.getById)
+
+router.put('/:budgetId',
+    validateBudgetInput,
+    handleInputErrors,
+    BudgetController.updateById
+)
+router.delete('/:budgetId',
+    BudgetController.deleteById
+)
+
+// Routers for expenses
+router.post('/:budgetId/expenses', 
+    validateExpenseInput,
+    handleInputErrors,
+    ExpensesController.create
+)
+router.get('/:budgetId/expenses/:expenseId', ExpensesController.getById)
+router.put('/:budgetId/expenses/:expenseId',
+    validateBudgetInput,
+    handleInputErrors, 
+    ExpensesController.updateById
+)
+router.delete('/:budgetId/expenses/:expenseId', ExpensesController.deleteById)
+
 
 export default router
