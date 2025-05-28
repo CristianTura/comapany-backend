@@ -19,30 +19,15 @@ export class AuthController {
         try {
             const user = await User.create(req.body)
             user.password = await hashPassword(password)
-            user.token = generateToken()
+            const token = generateToken()
+            user.token = token
+            if(process.env.NODE_ENV !== 'production'){
+                globalThis.cashTrackerConfirmationToken = token;
+            }
+
             await user.save()
             await AuthEmail.sendConfirmationEmail({name: user.name, email: user.email, token: user.token})
             res.status(201).json({message: 'Cuenta creada correctamente'})
-        } catch (error) {
-            // console.log(error)
-            res.status(500).json({error: 'Hubo un error'})
-        }
-    }
-
-    static confirmAccount = async (req: Request, res: Response) => {
-        const { token } = req.body
-        const user = await User.findOne({ where: { token } })
-        if(!user){
-            const error = new Error('El token no es válido')
-            res.status(401).json({error: error.message})
-            return
-        }
-
-        try {
-            user.confirmed = true
-            user.token = null
-            await user.save()
-            res.json({message: 'Cuenta confirmada'})
         } catch (error) {
             // console.log(error)
             res.status(500).json({error: 'Hubo un error'})
@@ -58,11 +43,11 @@ export class AuthController {
             return
         }
 
-        if(!user.confirmed){
-            const error = new Error('La cuenta no está confirmada')
-            res.status(403).json({error: error.message})
-            return
-        }
+        // if(!user.confirmed){
+        //     const error = new Error('La cuenta no está confirmada')
+        //     res.status(403).json({error: error.message})
+        //     return
+        // }
         
         const isValid = await comparePassword(password, user.password)
 

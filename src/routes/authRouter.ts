@@ -18,11 +18,6 @@ router.post('/create-account',
     AuthController.createAccount
 )
 
-router.post('/confirm-acount',
-    body('token').notEmpty().isLength({min: 6, max: 6}).withMessage('El token no es válido'),
-    handleInputErrors,
-    AuthController.confirmAccount)
-
 router.post('/login',
     body('email').isEmail().withMessage('Email no válido'),
     body('password').isLength({min: 8}).withMessage('La contraseña no es válida'),

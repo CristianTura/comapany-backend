@@ -9,23 +9,24 @@ type EmailType = {
 export class AuthEmail {
     static sendConfirmationEmail = async (user: EmailType) => {
         const email = await transport.sendMail({
-            from: "cristianbuenaventura15@gmail.com",
+            from: "j15@gmail.com",
             to: user.email,
-            subject: 'CashTrackr - Confirma tu cuenta',
+            subject: 'Company - Confirma tu cuenta',
             html: `
-                <p>Hola ${user.name}, has creado tu cuenta en CashTackr, ya esta casi lista</p>
+                <p>Hola ${user.name}, has creado tu cuenta en Company, ya esta casi lista</p>
                 <p>Para confirmar tu cuenta, haz click en el siguiente enlace:</p>
                 <a href="#">Confirmar cuenta</a>
                 <p>e ingresa el código: <b>${user.token}</b></p>
             `
         })
+        console.log(email)
     }
 
     static sendPasswordResentToken = async (user: EmailType) => {
         const email = await transport.sendMail({
-            from: "cristianbuenaventura15@gmail.com",
+            from: "j15@gmail.com",
             to: user.email,
-            subject: 'CashTrackr - Reestablece tu password',
+            subject: 'Company - Reestablece tu password',
             html: `
                 <p>Hola ${user.name}, has solicitado reestablecer tu password</p>
                 <p>Para confirmar tu cuenta, haz click en el siguiente enlace:</p>
