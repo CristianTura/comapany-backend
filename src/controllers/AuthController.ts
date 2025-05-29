@@ -57,7 +57,7 @@ export class AuthController {
             return
         }
         const token = generateJwt(user.id)
-        res.json(token)
+        res.json({token, rol: user.rol})
     }
 
     static fotgotPassword = async (req: Request, res: Response) => {

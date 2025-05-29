@@ -12,6 +12,7 @@ router.use(limiter)
 
 router.post('/create-account',
     body('name').notEmpty().withMessage('El nombre no puede ir vacio'),
+    body('rol').notEmpty().withMessage('El rol no puede ir vacio'),
     body('password').isLength({min: 8}).withMessage('La contraseña debe tener al menos 8 caracteres'),
     body('email').isEmail().withMessage('Email no válido'),
     handleInputErrors,

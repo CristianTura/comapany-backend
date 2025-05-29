@@ -25,6 +25,12 @@ class User extends Model {
     })
     declare email: string
 
+    @AllowNull(false)
+    @Column({
+        type: DataType.STRING(50)
+    })
+    declare rol: string
+
     @Column({
         type: DataType.STRING(6)
     })
